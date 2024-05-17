@@ -42,14 +42,14 @@ export default class ClerkMiddleware {
     const locationHeader = requestState.headers.get(constants.Headers.Location)
 
     if (locationHeader) {
-      return ctx.response.status(307).send('')
+      return ctx.response.status(307).send('x')
     }
 
     if (requestState.status === AuthStatus.Handshake) {
       throw new Error('Clerk: handshake status without redirect')
     }
 
-    // @ts-expect-error: TODO
+    // @ts-expect-error: Inject auth so the custom getter can read it
     ctx.request.__auth = requestState.toAuth()
 
     /**
@@ -78,6 +78,6 @@ const adonisRequestToRequest = (req: HttpContext['request']): Request => {
   )
 
   // Use a dummy base and the request will be fixed by the internals of the clerk/backend package
-  const dummyOriginReqUrl = new URL(req.url || '', `${req.protocol()}://clerk-dummy`)
+  const dummyOriginReqUrl = new URL(req.url() || '', `${req.protocol()}://clerk-dummy`)
   return new Request(dummyOriginReqUrl, { method: req.method(), headers })
 }

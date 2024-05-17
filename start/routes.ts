@@ -12,5 +12,11 @@ import router from '@adonisjs/core/services/router'
 router.on('/').render('pages/home')
 
 router.get('/api/me', (ctx) => {
-  return ctx.response.json({ user: ctx.request?.auth ?? null })
+  const { userId } = ctx.request.auth
+
+  if (!userId) {
+    return ctx.response.status(401).send('Unauthorized')
+  }
+
+  return ctx.response.json(ctx.request.auth)
 })
