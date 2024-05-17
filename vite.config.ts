@@ -1,8 +1,10 @@
 import { defineConfig } from 'vite'
 import adonisjs from '@adonisjs/vite/client'
+import EnvironmentPlugin from 'vite-plugin-environment'
 
 export default defineConfig({
   plugins: [
+    EnvironmentPlugin(['CLERK_PUBLISHABLE_KEY']),
     adonisjs({
       /**
        * Entrypoints of your application. Each entrypoint will
