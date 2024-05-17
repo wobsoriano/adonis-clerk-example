@@ -1,7 +1,6 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import type { NextFn } from '@adonisjs/core/types/http'
 import { createClerkClient } from '@clerk/backend'
-import { AuthStatus, constants } from '@clerk/backend/internal'
 import { apiUrlFromPublishableKey } from '@clerk/shared/apiUrlFromPublishableKey'
 
 const API_VERSION = process.env.CLERK_API_VERSION || 'v1'
@@ -38,16 +37,6 @@ export default class ClerkMiddleware {
     requestState.headers.forEach((value, key) => {
       ctx.response.header(key, value)
     })
-
-    const locationHeader = requestState.headers.get(constants.Headers.Location)
-
-    if (locationHeader) {
-      return ctx.response.status(307).send('x')
-    }
-
-    if (requestState.status === AuthStatus.Handshake) {
-      throw new Error('Clerk: handshake status without redirect')
-    }
 
     // @ts-expect-error: Inject auth so the custom getter can read it
     ctx.request.__auth = requestState.toAuth()
